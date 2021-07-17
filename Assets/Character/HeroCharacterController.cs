@@ -6,7 +6,8 @@ using UnityEngine;
 public class HeroCharacterController : MonoBehaviour
 {
     [SerializeField] LayerMask groundLayers;
-    [SerializeField] public float runSpeed = 8f;
+    [SerializeField] public float actualSpeed = 8f;
+    [SerializeField] public float speed = 8f;
     [SerializeField] private float jumpHeight = 2f;
     [SerializeField] private Transform[] groundChecks;
     [SerializeField] private Transform[] wallChecks;
@@ -18,7 +19,7 @@ public class HeroCharacterController : MonoBehaviour
     private Vector3 velocity;
     private bool isGrounded;
     private bool blocked;
-    private float horizontalInput;
+    public float horizontalInput;
 
     private bool jumpPressed;
     private float jumpTimer;
@@ -31,7 +32,6 @@ public class HeroCharacterController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         GM = gameManager.GetComponent<GameManager>();
-        horizontalInput = 1f;
     }
 
     // Update is called once per frame
@@ -71,7 +71,7 @@ public class HeroCharacterController : MonoBehaviour
         // movement
         if (!blocked)
         {
-            characterController.Move(new Vector3(horizontalInput * runSpeed, 0, 0) * Time.deltaTime);
+            characterController.Move(new Vector3(horizontalInput * actualSpeed, 0, 0) * Time.deltaTime);
         }
 
         // jumpPressed = Input.GetButtonDown("Jump");
@@ -90,7 +90,7 @@ public class HeroCharacterController : MonoBehaviour
         // add gravitation
         characterController.Move(velocity * Time.deltaTime);
 
-        animator.SetFloat("speed", runSpeed);
+        animator.SetFloat("speed", actualSpeed);
         animator.SetBool("isGrounded", isGrounded);
         animator.SetFloat("verticalSpeed", velocity.y);
 
@@ -109,7 +109,7 @@ public class HeroCharacterController : MonoBehaviour
                 GM.finishGame();
                 break;
             case "Finish":
-                runSpeed = 0;
+                actualSpeed = 0;
                 GM.finishGame();
                 break;
             default: break;

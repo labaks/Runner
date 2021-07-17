@@ -1,66 +1,54 @@
-using System.Threading;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class RoadGenerator : MonoBehaviour
 {
-    public GameObject[] RoadPrefabs;
-    private List<GameObject> roads = new List<GameObject>();
-    public float maxSpeed = 1;
-    private float speed = 0;
-    public int maxRoadCount = 3;
-    // Start is called before the first frame update
+    public Chunk[] RoadPrefabs;
+    public Transform RoadStart;
+    public Transform player;
+    private List<Chunk> spawnedRoads = new List<Chunk>();
+
     void Start()
     {
-        ResetLevel();
-        StartLevel();
+        StartSpawn();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (speed == 0) return;
-        foreach (GameObject road in roads)
+        if (player.position.x > spawnedRoads[spawnedRoads.Count - 1].end.position.x - 10)
         {
-            road.transform.position -= new Vector3(speed * Time.deltaTime, 0, 0);
-        }
-        if (roads[0].transform.position.x < -15)
-        {
-            Destroy(roads[0].gameObject);
-            roads.RemoveAt(0);
-            CreateNewRoad();
+            SpawnRoad();
         }
     }
 
-    public void StartLevel()
+    public void StartSpawn()
     {
-        speed = maxSpeed;
+        for (int i = 0; i < spawnedRoads.Count; i++)
+        {
+            Destroy(spawnedRoads[i].gameObject);
+        }
+        spawnedRoads.Clear();
+        SpawnRoad();
     }
 
-    public void ResetLevel()
+    private void SpawnRoad()
     {
-        speed = 0;
-        while (roads.Count > 0)
+        Chunk newRoad = Instantiate(RoadPrefabs[Random.Range(0, RoadPrefabs.Length)]);
+        newRoad.transform.SetParent(transform);
+        if (spawnedRoads.Count != 0)
         {
-            Destroy(roads[0].gameObject);
-            roads.RemoveAt(0);
+            newRoad.transform.position = spawnedRoads[spawnedRoads.Count - 1].end.position - newRoad.begin.localPosition;
         }
-        for (int i = 0; i < maxRoadCount; i++)
+        else
         {
-            CreateNewRoad();
+            newRoad.transform.position = RoadStart.transform.position;
         }
-    }
+        spawnedRoads.Add(newRoad);
 
-    private void CreateNewRoad()
-    {
-        Vector3 pos = Vector3.zero;
-        if (roads.Count > 0)
+        if (spawnedRoads.Count >= 3)
         {
-            pos = roads[roads.Count - 1].transform.position + new Vector3(20, 0, 0);
+            Destroy(spawnedRoads[0].gameObject);
+            spawnedRoads.RemoveAt(0);
         }
-        GameObject go = Instantiate(RoadPrefabs[Random.Range(0, RoadPrefabs.Length)], pos, Quaternion.identity);
-        go.transform.SetParent(transform);
-        roads.Add(go);
     }
 }
