@@ -11,7 +11,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Text Distance = null;
     [SerializeField] private GameObject Hero = null;
     [SerializeField] private GameObject Camera = null;
-    [SerializeField] private GameObject StartPlatform = null;
     [SerializeField] private RoadGenerator roadGenerator = null;
 
     private int passedDistance;
