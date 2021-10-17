@@ -26,12 +26,14 @@ public class HeroCharacterController : MonoBehaviour
     private float jumpGracePeriod = 0.2f;
 
     private GameManager GM;
+    private Collider collider;
 
     void Start()
     {
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         GM = gameManager.GetComponent<GameManager>();
+        collider = GetComponent<Collider>();
     }
 
     // Update is called once per frame
@@ -102,6 +104,7 @@ public class HeroCharacterController : MonoBehaviour
     }
     private void OnTriggerEnter(Collider col)
     {
+        Debug.Log(col.tag);
         switch (col.tag)
         {
             case "DeathZone":

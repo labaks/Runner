@@ -10,11 +10,12 @@ public class Enemy : MonoBehaviour
     [SerializeField] private Transform groundCheck, wallCheck;
     [SerializeField] private Vector3 knockBackSpeed;
     private bool groundDetected, wallDetected;
-    private float currentHealth, knockBackStartTime;
+    [SerializeField] private float currentHealth, knockBackStartTime;
     private int facingDirection, damageDirection;
     private Rigidbody rb;
     private Animator animator;
     private Vector3 movement;
+    private Collider collider;
 
     private enum State
     {
@@ -26,6 +27,7 @@ public class Enemy : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+        collider = GetComponent<Collider>();
         currentHealth = maxHealth;
         facingDirection = 1;
     }
@@ -72,7 +74,7 @@ public class Enemy : MonoBehaviour
 
     private void EnterKnockbackState()
     {
-        // Debug.Log("EnterKnockbackState");
+        Debug.Log("EnterKnockbackState");
         knockBackStartTime = Time.time;
         movement.Set(knockBackSpeed.x * damageDirection, knockBackSpeed.y, knockBackSpeed.z);
         rb.velocity = movement;
@@ -93,7 +95,9 @@ public class Enemy : MonoBehaviour
 
     private void EnterDeadState()
     {
-
+        animator.SetBool("dead", true);
+        rb.isKinematic = true;
+        collider.enabled = false;
     }
     private void UpdateDeadState()
     {
@@ -101,6 +105,7 @@ public class Enemy : MonoBehaviour
     }
     private void ExitDeadState()
     {
+        animator.SetBool("dead", false);
 
     }
 
@@ -143,6 +148,7 @@ public class Enemy : MonoBehaviour
     private void Damage(float[] attackDetails)
     {
         currentHealth -= attackDetails[0];
+        Debug.Log("damaged");
 
         if (attackDetails[1] > transform.position.x)
         {
