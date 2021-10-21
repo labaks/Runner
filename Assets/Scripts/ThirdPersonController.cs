@@ -31,8 +31,20 @@ public class ThirdPersonController : MonoBehaviour
 
     void Update()
     {
+        Plane playerPlane = new Plane(Vector3.up, transform.position);
+        Ray ray = UnityEngine.Camera.main.ScreenPointToRay(Input.mousePosition);
+        float hitDist = 0f;
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (playerPlane.Raycast(ray, out hitDist))
+        {
+            Vector3 targetPoint = ray.GetPoint(hitDist);
+            Quaternion targetRotation = Quaternion.LookRotation(targetPoint - transform.position);
+            targetRotation.x = 0;
+            targetRotation.z = 0;
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7f * Time.deltaTime);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             Attack();
         }
@@ -47,29 +59,25 @@ public class ThirdPersonController : MonoBehaviour
             {
                 float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
                 float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-                transform.rotation = Quaternion.Euler(0f, angle, 0f);
+                // transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
                 Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
 
                 controller.Move(moveDir.normalized * speed * Time.deltaTime);
             }
         }
-
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Hero_attack") && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.95f)
-        {
-            isAttacking = false;
-        }
     }
+
+
 
     public void Attack()
     {
-        isAttacking = true;
         animator.SetTrigger("Attack");
         Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers, QueryTriggerInteraction.Ignore);
 
         foreach (Collider enemy in hitEnemies)
         {
-            Debug.Log("We hit " + enemy.name);
+            // Debug.Log("We hit " + enemy.name);
             enemy.GetComponent<EnemyController>().TakeDamage(attackDamage);
         }
     }
@@ -92,12 +100,16 @@ public class ThirdPersonController : MonoBehaviour
         if (attackPoint == null) return;
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
-
-    public void Die() {
+    public void Die()
+    {
         gameObject.layer = 11;
         Debug.Log("Hero died");
         animator.SetBool("IsDead", true);
         GetComponent<Collider>().enabled = false;
         this.enabled = false;
+    }
+    float AngleBetweenTwoPoints(Vector3 a, Vector3 b)
+    {
+        return Mathf.Atan2(a.z - b.z, a.x - b.x) * Mathf.Rad2Deg;
     }
 }
