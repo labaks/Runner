@@ -20,16 +20,22 @@ public class EnemyController : MonoBehaviour
     public float maxHealth = 100;
     public int attackDamage = 10;
     GameObject hit;
+    Transform canvas;
 
     [SerializeField] float currentHealth;
     [SerializeField] bool canAttack = true;
     void Start()
     {
         currentHealth = maxHealth;
+        health.fillAmount = currentHealth / maxHealth;
+        healthText.text = $"{currentHealth.ToString()} / {maxHealth.ToString()}";
+        canvas = health.transform.parent.parent;
+        canvas.forward = -Camera.main.transform.forward;
     }
 
     void Update()
     {
+        canvas.forward = -Camera.main.transform.forward;
         Collider[] hearHero = Physics.OverlapSphere(head.position, hearingRange, hero, QueryTriggerInteraction.Ignore);
         if (hearHero.Length > 0)
         {
@@ -59,7 +65,7 @@ public class EnemyController : MonoBehaviour
     public void Attack(Transform target)
     {
         animator.SetTrigger("Attack");
-        target.GetComponent<ThirdPersonController>().TakeDamage(attackDamage);
+        target.GetComponent<PlayerController>().TakeDamage(attackDamage);
         canAttack = false;
     }
 
