@@ -36,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0.000061035156}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2670688268711227447
 CanvasRenderer:
@@ -202,6 +202,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   hitParticles: {fileID: 2023152962263441034, guid: 8a1ab223bb9fa1d4b9c9ca80132d4f90, type: 3}
+  damagePopup: {fileID: 9103504239132808079, guid: 58a67c31cbc47fd40ab4b8378a471022, type: 3}
   hearingRange: 10
   attackRange: 1.2
   speed: 4

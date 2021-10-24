@@ -13,8 +13,8 @@ public class Bullet : MonoBehaviour
         {
             collision.gameObject.GetComponent<EnemyController>().TakeDamage(attackDamage);
         }
-        GameObject effect = Instantiate(hitEffect, transform.position, Quaternion.identity);
-        Destroy(effect, 5f);
-        Destroy(gameObject);
+        // GameObject effect = Instantiate(hitEffect, transform.position, Quaternion.identity);
+        // Destroy(effect, 5f);
+        if (collision.gameObject.name != "Hero") Destroy(gameObject);
     }
 }

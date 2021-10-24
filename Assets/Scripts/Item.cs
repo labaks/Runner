@@ -8,6 +8,7 @@ public class Item : MonoBehaviour
 {
     public Sprite icon;
     public GameObject prefab;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -17,7 +18,6 @@ public class Item : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // transform.rotation = Quaternion.Angle()
 
     }
 }

@@ -96,7 +96,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 1.22
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &8272310087715859217
 Rigidbody:
@@ -127,3 +127,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitEffect: {fileID: 2023152962263441034, guid: 8a1ab223bb9fa1d4b9c9ca80132d4f90, type: 3}
+  attackDamage: 30

@@ -19,13 +19,16 @@ public class Attacking : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Fire1") && haveGun)
+        if (Input.GetButtonDown("Fire1"))
         {
-            Shoot();
-        }
-        if (Input.GetButtonDown("Fire2"))
-        {
-            Attack();
+            if (haveGun)
+            {
+                Shoot();
+            }
+            else
+            {
+                Attack();
+            }
         }
     }
 

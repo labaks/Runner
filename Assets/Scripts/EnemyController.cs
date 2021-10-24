@@ -12,6 +12,8 @@ public class EnemyController : MonoBehaviour
 
     public LayerMask hero;
     public GameObject hitParticles;
+    private GameObject damageText;
+    public GameObject damagePopup;
 
     public float hearingRange = 10f;
     public float attackRange = 1f;
@@ -19,6 +21,7 @@ public class EnemyController : MonoBehaviour
 
     public float maxHealth = 100;
     public int attackDamage = 10;
+    bool isDead = false;
     GameObject hit;
     Transform canvas;
 
@@ -35,30 +38,33 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
-        canvas.forward = -Camera.main.transform.forward;
-        Collider[] hearHero = Physics.OverlapSphere(head.position, hearingRange, hero, QueryTriggerInteraction.Ignore);
-        if (hearHero.Length > 0)
+        if (!isDead)
         {
-            canAttack = true;
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("attack") && animator.GetCurrentAnimatorStateInfo(0).normalizedTime <= 1f) canAttack = false;
-            Transform hero = hearHero[0].transform;
-            transform.LookAt(hero);
-            if (Vector3.Distance(transform.position, hero.position) <= attackRange)
+            canvas.forward = -Camera.main.transform.forward;
+            Collider[] hearHero = Physics.OverlapSphere(head.position, hearingRange, hero, QueryTriggerInteraction.Ignore);
+            if (hearHero.Length > 0)
             {
-                if (canAttack)
+                canAttack = true;
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("attack") && animator.GetCurrentAnimatorStateInfo(0).normalizedTime <= 1f) canAttack = false;
+                Transform hero = hearHero[0].transform;
+                transform.LookAt(hero);
+                if (Vector3.Distance(transform.position, hero.position) <= attackRange)
                 {
-                    animator.SetBool("IsMoving", false);
-                    Attack(hero);
+                    if (canAttack)
+                    {
+                        animator.SetBool("IsMoving", false);
+                        Attack(hero);
+                    }
+                }
+                else
+                {
+                    GoToHero();
                 }
             }
             else
             {
-                GoToHero();
+                animator.SetBool("IsMoving", false);
             }
-        }
-        else
-        {
-            animator.SetBool("IsMoving", false);
         }
     }
 
@@ -79,11 +85,11 @@ public class EnemyController : MonoBehaviour
     {
         canAttack = false;
         currentHealth -= damage;
+        instantiateDamagePopup(damage);
         health.fillAmount = currentHealth / maxHealth;
         healthText.text = $"{currentHealth.ToString()} / {maxHealth.ToString()}";
         animator.SetTrigger("Hurt");
-        hit = Instantiate(hitParticles, transform.position + Vector3.up, Quaternion.identity);
-        hit.transform.SetParent(transform);
+        // hit = Instantiate(hitParticles, transform.position + Vector3.up, Quaternion.identity, transform);
         //move backward
         Hurted();
         if (currentHealth <= 0)
@@ -93,20 +99,28 @@ public class EnemyController : MonoBehaviour
         Invoke("Normalize", 0.5f);
     }
 
+    public void instantiateDamagePopup(int damage)
+    {
+        damageText = Instantiate(damagePopup, transform.position + Vector3.up, Quaternion.identity, health.transform.parent.parent);
+        damageText.GetComponent<Text>().text = "-" + damage.ToString();
+    }
+
     void Die()
     {
         Debug.Log("Enemy died");
-        animator.SetBool("IsDead", true);
-        health.transform.parent.parent.gameObject.SetActive(false);
+        isDead = true;
+        animator.SetBool("IsDead", isDead);
+        canvas.gameObject.SetActive(false);
         GetComponent<Collider>().enabled = false;
-        this.enabled = false;
+        // this.enabled = false;
     }
 
     void Normalize()
     {
         body.GetComponent<SkinnedMeshRenderer>().material.color = Color.white;
         head.GetComponent<MeshRenderer>().material.color = Color.white;
-        Destroy(hit);
+        // Destroy(hit.gameObject);
+        Destroy(damageText.gameObject);
     }
 
     void Hurted()

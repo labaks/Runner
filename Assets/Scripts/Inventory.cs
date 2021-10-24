@@ -12,14 +12,31 @@ public class Inventory : MonoBehaviour
     public GameObject[] itemsWrappers;
     private Item currentItem;
     public float collectRadius = 0.5f;
-    public LayerMask itemsLayers;
     public GameObject[] rightHandItems;
+    public Texture2D gunCursor;
+    GameObject tmpItem;
     void Start()
     {
+        Cursor.SetCursor(gunCursor, Vector3.zero, CursorMode.ForceSoftware);
         if (inventory.Length > 0)
         {
             currentItem = inventory[0];
             FillInventory();
+        }
+    }
+    private void Update()
+    {
+        if (Input.mouseScrollDelta.y > 0 && inventory.Length != 0)
+        {
+            int currentItemIndex = SearchItemIndexByName(currentItem.gameObject.name);
+            int nextItemIndex = currentItemIndex - 1 < 0 ? inventory.Length - 1 : currentItemIndex - 1;
+            ChangeCurrentItem(inventory[nextItemIndex]);
+        }
+        else if (Input.mouseScrollDelta.y < 0 && inventory.Length != 0)
+        {
+            int currentItemIndex = SearchItemIndexByName(currentItem.gameObject.name);
+            int nextItemIndex = currentItemIndex + 1 > inventory.Length - 1 ? 0 : currentItemIndex + 1;
+            ChangeCurrentItem(inventory[nextItemIndex]);
         }
     }
 
@@ -40,9 +57,11 @@ public class Inventory : MonoBehaviour
     {
         if (inventory.Length <= inventorySize)
         {
-            inventory = inventory.Append(item);
-            ChangeCurrentItem(item);
-            Destroy(item.gameObject);
+            tmpItem = item.prefab;
+            inventory = inventory.Append(tmpItem.GetComponent<Item>());
+            ChangeCurrentItem(inventory[inventory.Length - 1]);
+            // Destroy(item.gameObject);
+            item.gameObject.SetActive(false);
             FillInventory();
         }
     }
@@ -53,15 +72,36 @@ public class Inventory : MonoBehaviour
         {
             rightHandItem.SetActive(false);
         }
-        Debug.Log(item.name);
+        HaveGunSwitcher(false);
+        currentItem = item;
         switch (item.name)
         {
             case "Gun":
-                gameObject.GetComponent<Attacking>().haveGun = true;
+                HaveGunSwitcher(true);
                 rightHand.transform.GetChild(0).gameObject.SetActive(true);
+                break;
+            case "Knife":
+                rightHand.transform.GetChild(1).gameObject.SetActive(true);
+                break;
+            case "Baseballbeat":
+                rightHand.transform.GetChild(2).gameObject.SetActive(true);
                 break;
             default: break;
         }
+    }
+
+    void HaveGunSwitcher(bool haveGun)
+    {
+        gameObject.GetComponent<Attacking>().haveGun = haveGun;
+    }
+
+    int SearchItemIndexByName(string itemName)
+    {
+        for (int i = 0; i < inventory.Length; i++)
+        {
+            if (itemName == inventory[i].gameObject.name) return i;
+        }
+        return -1;
     }
 }
 
