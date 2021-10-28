@@ -14,6 +14,9 @@ public class Inventory : MonoBehaviour
     public float collectRadius = 0.5f;
     public GameObject[] rightHandItems;
     public Texture2D gunCursor;
+    public Text coins;
+
+    int coinCount = 0;
     GameObject tmpItem;
     void Start()
     {
@@ -23,6 +26,7 @@ public class Inventory : MonoBehaviour
             currentItem = inventory[0];
             FillInventory();
         }
+        coins.text = coinCount.ToString();
     }
     private void Update()
     {
@@ -42,7 +46,15 @@ public class Inventory : MonoBehaviour
 
     private void OnTriggerEnter(Collider item)
     {
-        Collect(item.GetComponent<Item>());
+        Item triggered = item.GetComponent<Item>();
+        if (triggered.type == "coin")
+        {
+            AddCoin(triggered.price, triggered);
+        }
+        else
+        {
+            Collect(triggered);
+        }
     }
 
     public void FillInventory()
@@ -51,6 +63,12 @@ public class Inventory : MonoBehaviour
         {
             itemsWrappers[i].transform.GetComponent<Image>().sprite = inventory[i].icon;
         }
+    }
+
+    void AddCoin(int coinsCollected, Item coin) {
+        coinCount += coinsCollected;
+        coins.text = coinCount.ToString();
+        Destroy(coin.gameObject);
     }
 
     void Collect(Item item)

@@ -8,6 +8,8 @@ public class Item : MonoBehaviour
 {
     public Sprite icon;
     public GameObject prefab;
+    public string type;
+    public int price;
 
     // Start is called before the first frame update
     void Start()

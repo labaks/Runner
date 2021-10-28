@@ -21,6 +21,9 @@ public class EnemyController : MonoBehaviour
 
     public float maxHealth = 100;
     public int attackDamage = 10;
+    public int[] coinsRange = new int[2];
+    public GameObject coinPrefab;
+    public GameObject marker;
     bool isDead = false;
     GameObject hit;
     Transform canvas;
@@ -107,12 +110,19 @@ public class EnemyController : MonoBehaviour
 
     void Die()
     {
-        Debug.Log("Enemy died");
         isDead = true;
         animator.SetBool("IsDead", isDead);
+        Loot();
+        marker.gameObject.SetActive(false);
         canvas.gameObject.SetActive(false);
         GetComponent<Collider>().enabled = false;
         // this.enabled = false;
+    }
+
+    void Loot()
+    {
+        GameObject coin = Instantiate(coinPrefab, transform.position + Vector3.up, Quaternion.identity);
+        coin.GetComponent<Item>().price = Random.Range(coinsRange[0], coinsRange[1]);
     }
 
     void Normalize()
