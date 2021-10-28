@@ -1,11 +1,11 @@
 using System.Net.Mime;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Item : MonoBehaviour
 {
+    public string itemName;
+    public Vector3 inHandPosition;
     public Sprite icon;
     public GameObject prefab;
     public string type;

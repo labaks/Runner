@@ -15,7 +15,7 @@ public class Enemy : MonoBehaviour
     private Rigidbody rb;
     private Animator animator;
     private Vector3 movement;
-    private Collider collider;
+    private Collider thisCollider;
 
     private enum State
     {
@@ -27,7 +27,7 @@ public class Enemy : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
-        collider = GetComponent<Collider>();
+        thisCollider = GetComponent<Collider>();
         currentHealth = maxHealth;
         facingDirection = 1;
     }
@@ -97,7 +97,7 @@ public class Enemy : MonoBehaviour
     {
         animator.SetBool("dead", true);
         rb.isKinematic = true;
-        collider.enabled = false;
+        thisCollider.enabled = false;
     }
     private void UpdateDeadState()
     {

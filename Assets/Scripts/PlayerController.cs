@@ -7,26 +7,37 @@ public class PlayerController : MonoBehaviour
 {
     public int maxHealth = 100;
     [SerializeField] int currentHealth;
-
-    public Image healthImg;
-    public Text healthText;
-    public Animator animator;
+    public Transform canvas;
+    Image healthImg;
+    Text healthText;
+    Animator animator;
+    public GameObject damagePopup;
 
     void Start()
     {
         currentHealth = maxHealth;
+        animator = GetComponent<Animator>();
+        healthImg = canvas.Find("HealthBarBg").Find("HealthBar").GetComponent<Image>();
+        healthText = canvas.Find("HealthBarBg").Find("HealthBar").Find("HealthCount").GetComponent<Text>();
     }
 
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
-        healthImg.fillAmount = currentHealth / maxHealth;
+        // instantiateDamagePopup(damage);
+        healthImg.fillAmount = (float)currentHealth / (float)maxHealth;
         healthText.text = $"{currentHealth.ToString()} / {maxHealth.ToString()}";
         // animator.SetTrigger("Hurt");
         if (currentHealth <= 0)
         {
             Die();
         }
+    }
+    public void instantiateDamagePopup(int damage)
+    {
+        GameObject damageText = Instantiate(damagePopup, healthImg.transform.position, Quaternion.identity, canvas);
+        damageText.GetComponent<Text>().text = "-" + damage.ToString();
+        // Destroy(damageText.gameObject, 0.5f);
     }
 
     public void Die()

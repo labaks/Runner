@@ -26,14 +26,14 @@ public class HeroCharacterController : MonoBehaviour
     private float jumpGracePeriod = 0.2f;
 
     private GameManager GM;
-    private Collider collider;
+    private Collider thisCollider;
 
     void Start()
     {
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         GM = gameManager.GetComponent<GameManager>();
-        collider = GetComponent<Collider>();
+        thisCollider = GetComponent<Collider>();
     }
 
     // Update is called once per frame

@@ -7,17 +7,17 @@ using UnityEngine.UI;
 public class Inventory : MonoBehaviour
 {
     public GameObject rightHand;
+    public Transform inventoryBag;
     public Item[] inventory;
     public int inventorySize = 5;
     public GameObject[] itemsWrappers;
     private Item currentItem;
-    public float collectRadius = 0.5f;
-    public GameObject[] rightHandItems;
     public Texture2D gunCursor;
     public Text coins;
 
     int coinCount = 0;
     GameObject tmpItem;
+    private Color32 currentItemcolor = new Color32(29, 27, 137, 255);
     void Start()
     {
         Cursor.SetCursor(gunCursor, Vector3.zero, CursorMode.ForceSoftware);
@@ -30,30 +30,30 @@ public class Inventory : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.mouseScrollDelta.y > 0 && inventory.Length != 0)
+        if (Input.mouseScrollDelta.y > 0 && inventory.Length > 1)
         {
-            int currentItemIndex = SearchItemIndexByName(currentItem.gameObject.name);
+            int currentItemIndex = SearchItemIndexByName(currentItem.itemName);
             int nextItemIndex = currentItemIndex - 1 < 0 ? inventory.Length - 1 : currentItemIndex - 1;
             ChangeCurrentItem(inventory[nextItemIndex]);
         }
-        else if (Input.mouseScrollDelta.y < 0 && inventory.Length != 0)
+        else if (Input.mouseScrollDelta.y < 0 && inventory.Length > 1)
         {
-            int currentItemIndex = SearchItemIndexByName(currentItem.gameObject.name);
+            int currentItemIndex = SearchItemIndexByName(currentItem.itemName);
             int nextItemIndex = currentItemIndex + 1 > inventory.Length - 1 ? 0 : currentItemIndex + 1;
             ChangeCurrentItem(inventory[nextItemIndex]);
         }
     }
 
-    private void OnTriggerEnter(Collider item)
+    private void OnTriggerEnter(Collider triggerCollider)
     {
-        Item triggered = item.GetComponent<Item>();
-        if (triggered.type == "coin")
+        Item trigger = triggerCollider.GetComponent<Item>();
+        if (trigger.type == "coin")
         {
-            AddCoin(triggered.price, triggered);
+            AddCoin(trigger.price, trigger);
         }
         else
         {
-            Collect(triggered);
+            Collect(trigger);
         }
     }
 
@@ -65,7 +65,8 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    void AddCoin(int coinsCollected, Item coin) {
+    void AddCoin(int coinsCollected, Item coin)
+    {
         coinCount += coinsCollected;
         coins.text = coinCount.ToString();
         Destroy(coin.gameObject);
@@ -75,37 +76,37 @@ public class Inventory : MonoBehaviour
     {
         if (inventory.Length <= inventorySize)
         {
-            tmpItem = item.prefab;
+            tmpItem = Instantiate(item.prefab, transform.position, Quaternion.identity, inventoryBag);
+            tmpItem.gameObject.SetActive(false);
             inventory = inventory.Append(tmpItem.GetComponent<Item>());
             ChangeCurrentItem(inventory[inventory.Length - 1]);
-            // Destroy(item.gameObject);
-            item.gameObject.SetActive(false);
+            Transform model = item.transform.Find("Sphere").Find("model");
+            Transform newItem = Instantiate(model, transform.position, Quaternion.identity, rightHand.transform);
+            newItem.name = item.itemName;
+            newItem.localPosition = item.inHandPosition;
+            newItem.localRotation = Quaternion.Euler(0, 0, 0);
+            Destroy(item.gameObject);
             FillInventory();
         }
     }
 
     void ChangeCurrentItem(Item item)
     {
-        foreach (GameObject rightHandItem in rightHandItems)
-        {
-            rightHandItem.SetActive(false);
-        }
-        HaveGunSwitcher(false);
         currentItem = item;
-        switch (item.name)
+        for (int i = 1; i < rightHand.transform.childCount; i++)
         {
-            case "Gun":
-                HaveGunSwitcher(true);
-                rightHand.transform.GetChild(0).gameObject.SetActive(true);
-                break;
-            case "Knife":
-                rightHand.transform.GetChild(1).gameObject.SetActive(true);
-                break;
-            case "Baseballbeat":
-                rightHand.transform.GetChild(2).gameObject.SetActive(true);
-                break;
-            default: break;
+            if (rightHand.transform.GetChild(i).gameObject.name == currentItem.itemName)
+            {
+                rightHand.transform.GetChild(i).gameObject.SetActive(true);
+            }
+            else
+            {
+                rightHand.transform.GetChild(i).gameObject.SetActive(false);
+            }
+            itemsWrappers[i-1].transform.parent.GetComponent<Image>().color = Color.white;
         }
+        HaveGunSwitcher(currentItem.type == "gun");
+        itemsWrappers[SearchItemIndexByName(currentItem.itemName)].transform.parent.GetComponent<Image>().color = currentItemcolor;
     }
 
     void HaveGunSwitcher(bool haveGun)
@@ -117,7 +118,7 @@ public class Inventory : MonoBehaviour
     {
         for (int i = 0; i < inventory.Length; i++)
         {
-            if (itemName == inventory[i].gameObject.name) return i;
+            if (itemName == inventory[i].itemName) return i;
         }
         return -1;
     }

@@ -193,12 +193,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0b40c7fb9ebdc1488b39bcb26f636d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 3069329861291930113}
-  controller: {fileID: 2412576524915666570}
+  currentHealth: 0
   body: {fileID: 3069329861284404037}
   head: {fileID: 3069329861284404039}
-  health: {fileID: 5770548965155850437}
-  healthText: {fileID: 7252507059574547675}
+  canvas: {fileID: 6199032242934758723}
   hero:
     serializedVersion: 2
     m_Bits: 1024
@@ -212,8 +210,6 @@ MonoBehaviour:
   coinsRange: 0100000004000000
   coinPrefab: {fileID: 233687008514678299, guid: 46c8a3ed479880a48b5136a0d29731f8, type: 3}
   marker: {fileID: 5274016437982224953}
-  currentHealth: 0
-  canAttack: 1
 --- !u!1 &3069329861284495401
 GameObject:
   m_ObjectHideFlags: 0

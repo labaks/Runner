@@ -3,13 +3,12 @@ using UnityEngine.UI;
 
 public class EnemyController : MonoBehaviour
 {
-    public Animator animator;
-    public CharacterController controller;
+    [SerializeField] float currentHealth;
     public Transform body;
     public Transform head;
-    public Image health;
-    public Text healthText;
-
+    public Transform canvas;
+    Image healthImage;
+    Text healthText;
     public LayerMask hero;
     public GameObject hitParticles;
     private GameObject damageText;
@@ -26,16 +25,19 @@ public class EnemyController : MonoBehaviour
     public GameObject marker;
     bool isDead = false;
     GameObject hit;
-    Transform canvas;
+    private Animator animator;
+    private CharacterController controller;
 
-    [SerializeField] float currentHealth;
-    [SerializeField] bool canAttack = true;
+    bool canAttack = true;
     void Start()
     {
+        animator = GetComponent<Animator>();
+        controller = GetComponent<CharacterController>();
         currentHealth = maxHealth;
-        health.fillAmount = currentHealth / maxHealth;
+        healthImage = canvas.Find("healthBg").Find("health").GetComponent<Image>();
+        healthImage.fillAmount = currentHealth / maxHealth;
+        healthText = canvas.Find("healthBg").Find("health").Find("healthCount").GetComponent<Text>();
         healthText.text = $"{currentHealth.ToString()} / {maxHealth.ToString()}";
-        canvas = health.transform.parent.parent;
         canvas.forward = -Camera.main.transform.forward;
     }
 
@@ -89,7 +91,7 @@ public class EnemyController : MonoBehaviour
         canAttack = false;
         currentHealth -= damage;
         instantiateDamagePopup(damage);
-        health.fillAmount = currentHealth / maxHealth;
+        healthImage.fillAmount = currentHealth / maxHealth;
         healthText.text = $"{currentHealth.ToString()} / {maxHealth.ToString()}";
         animator.SetTrigger("Hurt");
         // hit = Instantiate(hitParticles, transform.position + Vector3.up, Quaternion.identity, transform);
@@ -104,7 +106,7 @@ public class EnemyController : MonoBehaviour
 
     public void instantiateDamagePopup(int damage)
     {
-        damageText = Instantiate(damagePopup, transform.position + Vector3.up, Quaternion.identity, health.transform.parent.parent);
+        damageText = Instantiate(damagePopup, transform.position + Vector3.up, Quaternion.identity, healthImage.transform.parent.parent);
         damageText.GetComponent<Text>().text = "-" + damage.ToString();
     }
 

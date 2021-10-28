@@ -8,7 +8,6 @@ public class Bullet : MonoBehaviour
     public int attackDamage = 30;
     void OnCollisionEnter(Collision collision)
     {
-        // Debug.Log(collision.gameObject.name);
         if (collision.gameObject.GetComponent<EnemyController>() != null)
         {
             collision.gameObject.GetComponent<EnemyController>().TakeDamage(attackDamage);

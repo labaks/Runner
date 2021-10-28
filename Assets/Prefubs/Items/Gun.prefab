@@ -130,6 +130,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddde2f396d487134eb43c45692811692, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemName: Gun
+  inHandPosition: {x: 0.00000009689331, y: 0, z: 0.0000006540299}
   icon: {fileID: 21300000, guid: fcdd57ce9c1fff04fa04740cdb0fdfa1, type: 3}
   prefab: {fileID: 8969705012801455809}
   type: gun
