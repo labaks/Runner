@@ -123,7 +123,8 @@ public class EnemyController : MonoBehaviour
 
     void Loot()
     {
-        GameObject coin = Instantiate(coinPrefab, transform.position + Vector3.up, Quaternion.identity);
+        Vector3 lootPosition = new Vector3(transform.position.x, -0.5f, transform.position.z);
+        GameObject coin = Instantiate(coinPrefab, lootPosition, Quaternion.identity);
         coin.GetComponent<Item>().price = Random.Range(coinsRange[0], coinsRange[1]);
     }
 

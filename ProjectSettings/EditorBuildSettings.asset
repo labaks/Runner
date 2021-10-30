@@ -5,10 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
-    guid: d1c3109bdb54ad54c8a2b2838528e640
   - enabled: 1
-    path: Assets/Scenes/platformer1.unity
-    guid: dbb954f25079a304e841aea62b0a6526
+    path: Assets/Scenes/HubLocation.unity
+    guid: c5f3bd865b5ada940b42480194b1d597
+  - enabled: 1
+    path: Assets/Scenes/Dungeon.unity
+    guid: 46734bb3b9e4e574fafa80f335c8c1ec
   m_configObjects: {}

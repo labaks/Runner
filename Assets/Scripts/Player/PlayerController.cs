@@ -35,9 +35,10 @@ public class PlayerController : MonoBehaviour
     }
     public void instantiateDamagePopup(int damage)
     {
-        GameObject damageText = Instantiate(damagePopup, healthImg.transform.position, Quaternion.identity, canvas);
+        Vector3 vector = new Vector3(-830f, 360f, 0);
+        GameObject damageText = Instantiate(damagePopup, vector, Quaternion.identity, canvas);
         damageText.GetComponent<Text>().text = "-" + damage.ToString();
-        // Destroy(damageText.gameObject, 0.5f);
+        Destroy(damageText.gameObject, 0.5f);
     }
 
     public void Die()
