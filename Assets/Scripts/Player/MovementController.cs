@@ -10,6 +10,7 @@ public class MovementController : MonoBehaviour
     public float speed = 6f;
     public float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
+    public Quaternion targetRotation;
 
     void Update()
     {
@@ -20,7 +21,7 @@ public class MovementController : MonoBehaviour
         if (playerPlane.Raycast(ray, out hitDist))
         {
             Vector3 targetPoint = ray.GetPoint(hitDist);
-            Quaternion targetRotation = Quaternion.LookRotation(targetPoint - transform.position);
+            targetRotation = Quaternion.LookRotation(targetPoint - transform.position);
             targetRotation.x = 0;
             targetRotation.z = 0;
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7f * Time.deltaTime);
